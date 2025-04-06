@@ -7,6 +7,12 @@ const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
 let tokenClient;
 let currentDate = new Date();
 
+const googleColors = {
+  "1": "#a4bdfc", "2": "#7ae7bf", "3": "#dbadff", "4": "#ff887c", "5": "#fbd75b",
+  "6": "#ff8c00", "7": "#46d6db", "8": "#e1e1e1", "9": "#5484ed", "10": "#51b749",
+  "11": "#dc2127"
+};
+
 window.onload = () => {
   renderCalendarGrid();
   gapi.load("client", async () => {
@@ -14,22 +20,21 @@ window.onload = () => {
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
-      prompt: '', // ポップアップを抑制して自動再認証
+      prompt: '',
       callback: async (response) => {
-        gapi.client.setToken(response); // トークンを明示的に保存
+        gapi.client.setToken(response);
         await loadCalendar(currentDate);
         setInterval(() => {
           loadCalendar(currentDate);
-        }, 30000); // 30秒ごとに更新
+        }, 300000); // 5分ごとに更新
       },
     });
 
-    // すでにトークンがあれば自動読み込み、なければリクエスト
     if (gapi.client.getToken()) {
       await loadCalendar(currentDate);
       setInterval(() => {
         loadCalendar(currentDate);
-      }, 30000);
+      }, 300000);
     } else {
       tokenClient.requestAccessToken();
     }
@@ -50,12 +55,14 @@ function clearCalendarGrid() {
 
 function renderCalendarGrid() {
   const grid = document.querySelector(".calendar-grid");
+  grid.innerHTML = "";
   for (let i = 0; i < 42; i++) {
     const cell = document.createElement("div");
     cell.className = "calendar-day";
+    cell.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
     cell.innerHTML = `
-      <div class="day-number"></div>
-      <div class="event-list"></div>
+      <div class="day-number" style="font-size: 8px; color: #000;"></div>
+      <div class="event-list" style="height: 80px;"></div>
     `;
     grid.appendChild(cell);
   }
@@ -69,7 +76,7 @@ async function loadCalendar(date) {
 
   document.getElementById("monthYear").textContent = `${year}年${month + 1}月`;
 
-  const firstDayOffset = (startDate.getDay() + 1) % 7; // 土曜始まり対応
+  const firstDayOffset = (startDate.getDay() + 1) % 7;
   const calendarCells = document.querySelectorAll(".calendar-day");
 
   for (let i = 0; i < 42; i++) {
@@ -100,21 +107,48 @@ async function loadCalendar(date) {
   });
 
   const events = response.result.items;
-  const colorClasses = ["color-red", "color-blue", "color-green", "color-purple", "color-orange", "color-teal"];
 
-  events.forEach((event, index) => {
-    const date = event.start.date || event.start.dateTime?.slice(0, 10);
-    const cell = document.querySelector(`[data-date="${date}"]`);
-    if (cell) {
-      const eventList = cell.querySelector(".event-list");
-      if (eventList.childElementCount < 10) {
-        const el = document.createElement("div");
-        el.className = `event ${colorClasses[index % colorClasses.length]}`;
-        el.textContent = event.summary || "（無題）";
-        el.title = event.description || "詳細なし";
-        el.onclick = () => alert(`タイトル: ${event.summary}\n説明: ${event.description || "なし"}\n開始: ${event.start.dateTime || event.start.date}`);
-        eventList.appendChild(el);
+  events.forEach((event) => {
+    const start = event.start.date || event.start.dateTime?.slice(0, 10);
+    const end = event.end.date || event.end.dateTime?.slice(0, 10);
+    if (!start || !end) return;
+
+    const startDateObj = new Date(start);
+    const endDateObj = new Date(end);
+    endDateObj.setDate(endDateObj.getDate() - 1);
+
+    let current = new Date(startDateObj);
+    while (current <= endDateObj) {
+      const dateStr = current.toISOString().split("T")[0];
+      const cell = document.querySelector(`[data-date="${dateStr}"]`);
+      if (cell) {
+        const eventList = cell.querySelector(".event-list");
+        if (eventList.childElementCount < 10) {
+          const el = document.createElement("div");
+          el.className = "event";
+          el.textContent = event.summary || "（無題）";
+          el.title = event.description || "詳細なし";
+          el.style.fontSize = "6px";
+          el.style.height = "8px";
+          el.style.lineHeight = "8px";
+          el.style.overflow = "hidden";
+          el.style.whiteSpace = "nowrap";
+          el.style.textOverflow = "ellipsis";
+          el.style.width = "100%";
+          el.style.color = "#000";
+          el.style.fontFamily = "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+          if (event.colorId && googleColors[event.colorId]) {
+            el.style.backgroundColor = googleColors[event.colorId];
+          } else {
+            el.style.backgroundColor = "#a4bdfc"; // ピーコック色
+          }
+
+          el.onclick = () => alert(`タイトル: ${event.summary}\n説明: ${event.description || "なし"}\n開始: ${event.start.dateTime || event.start.date}`);
+          eventList.appendChild(el);
+        }
       }
+      current.setDate(current.getDate() + 1);
     }
   });
 }
