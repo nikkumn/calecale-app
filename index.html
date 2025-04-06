@@ -2,105 +2,15 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>スマホカレンダー</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>月間カレンダー</title>
   <link rel="stylesheet" href="style.css">
-  <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background: #f4f4f4;
-    }
-    .calendar-container {
-      max-width: 430px;
-      margin: 0 auto;
-      background: white;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .calendar-header {
-      text-align: center;
-      padding: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      background-color: #00c4cc;
-      color: white;
-      position: relative;
-    }
-    .nav-button {
-      position: absolute;
-      top: 10px;
-      font-size: 20px;
-      background: none;
-      border: none;
-      color: white;
-      cursor: pointer;
-    }
-    .prev-month { left: 10px; }
-    .next-month { right: 10px; }
-    .calendar-grid {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      flex-grow: 1;
-    }
-    .day-label {
-      text-align: center;
-      padding: 4px;
-      font-size: 11px;
-      background: #eee;
-      border-bottom: 1px solid #ccc;
-    }
-    .calendar-day {
-      border: 1px solid #ddd;
-      padding: 2px;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      font-size: 10px;
-      overflow: hidden;
-      min-height: 80px;
-      max-height: 120px;
-    }
-    .day-number {
-      font-weight: bold;
-      font-size: 12px;
-      margin-bottom: 2px;
-      color: #333;
-    }
-    .event-list {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      overflow: hidden;
-      flex-grow: 1;
-    }
-    .event {
-      padding: 1px 3px;
-      border-radius: 3px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      font-size: 10px;
-      color: white;
-      cursor: pointer;
-    }
-    .color-red { background: #ef5350; }
-    .color-blue { background: #64b5f6; }
-    .color-green { background: #81c784; }
-    .color-purple { background: #ba68c8; }
-    .color-orange { background: #ffb74d; }
-    .color-teal { background: #4db6ac; }
-  </style>
 </head>
 <body>
   <div class="calendar-container">
-    <div class="calendar-header">
-      <button class="nav-button prev-month" onclick="changeMonth(-1)">&#8592;</button>
-      <span id="monthYear"></span>
-      <button class="nav-button next-month" onclick="changeMonth(1)">&#8594;</button>
-    </div>
+    <div class="calendar-header">2024年4月</div>
     <div class="calendar-grid">
+      <!-- 曜日ヘッダー（土曜始まり） -->
       <div class="day-label">土</div>
       <div class="day-label">日</div>
       <div class="day-label">月</div>
@@ -108,12 +18,24 @@
       <div class="day-label">水</div>
       <div class="day-label">木</div>
       <div class="day-label">金</div>
-      <!-- 日付セルはJSで動的生成 -->
+
+      <!-- 42日分のマスを生成 -->
+      <!-- JavaScriptで動的に日付やイベントを挿入 -->
+      <!-- 各日セル：日付＋イベントリスト -->
+      <!-- 初期状態は空 -->
+      ${Array.from({ length: 42 }).map(() => `
+        <div class="calendar-day">
+          <div class="day-number"></div>
+          <div class="event-list"></div>
+        </div>
+      `).join('')}
     </div>
   </div>
 
+  <!-- 必要なGoogle APIのスクリプト -->
   <script src="https://apis.google.com/js/api.js"></script>
   <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <!-- メインスクリプト -->
   <script src="script.js"></script>
 </body>
 </html>
