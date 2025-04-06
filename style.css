@@ -1,1 +1,75 @@
+body {
+  font-family: "Helvetica", sans-serif;
+  background: #f8f8f8;
+  margin: 0;
+  padding: 0;
+}
 
+.calendar-container {
+  max-width: 420px;
+  margin: 0 auto;
+  background: white;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.calendar-header {
+  text-align: center;
+  padding: 16px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00c4cc;
+  border-bottom: 1px solid #ddd;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: #eee;
+}
+
+.day-label {
+  background: #f0f0f0;
+  text-align: center;
+  padding: 8px;
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.day {
+  background: white;
+  min-height: 80px;
+  padding: 4px;
+  border: 1px solid #e0e0e0;
+  font-size: 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.day-number {
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.event {
+  font-size: 10px;
+  color: white;
+  padding: 2px 4px;
+  border-radius: 4px;
+  margin: 2px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* イベントの色バリエーション */
+.pink { background: #ff80ab; }
+.red { background: #ef5350; }
+.blue { background: #64b5f6; }
+.green { background: #81c784; }
+.purple { background: #ba68c8; }
+.orange { background: #ffb74d; }
+.teal { background: #4db6ac; }
