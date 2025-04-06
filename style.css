@@ -1,102 +1,50 @@
-body {
-  margin: 0;
-  font-family: sans-serif;
-  background: #f4f4f4;
-}
-
-.calendar-container {
-  max-width: 430px;
-  margin: 0 auto;
-  background: white;
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.calendar-header {
-  text-align: center;
-  padding: 10px;
-  font-size: 18px;
-  font-weight: bold;
-  background-color: #00c4cc;
-  color: white;
-}
-
 .calendar-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  flex-grow: 1;
-}
-
-.day-label {
-  text-align: center;
-  padding: 4px;
-  font-size: 11px;
-  background: #eee;
-  border-bottom: 1px solid #ccc;
+  gap: 1px;
+  background-color: #ccc;
 }
 
 .calendar-day {
-  border: 1px solid #ddd;
-  padding: 2px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  font-size: 10px;
+  background-color: #fff;
+  height: 120px;
   overflow: hidden;
-  min-height: 80px;
-  max-height: 120px;
+  box-sizing: border-box;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+.day-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  height: 100%;
 }
 
 .day-number {
-  font-weight: bold;
-  font-size: 12px;
-  margin-bottom: 2px;
-  color: #333;
+  width: 28px;
+  font-size: 10px;
+  padding: 2px 4px;
+  color: #555;
+  flex-shrink: 0;
 }
 
 .event-list {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  height: 100%;
+  gap: 0;
   overflow: hidden;
-  flex-grow: 1;
 }
 
 .event {
-  background: #90caf9;
-  color: #fff;
-  padding: 1px 3px;
-  border-radius: 3px;
+  font-size: 8px;
+  height: 8px;
+  line-height: 8px;
+  width: 100%;
+  overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  overflow: hidden;
-  font-size: 10px;
-}
-
-/* 長すぎるイベントは3点リーダー表示 */
-.event:nth-child(n+11) {
-  display: none;
-}
-
-.calendar-day .event-list::after {
-  content: '＋他の予定あり';
-  font-size: 9px;
-  color: #999;
-  display: block;
-  margin-top: 2px;
-  text-align: left;
-  display: none;
-}
-
-.calendar-day .event-list .event:nth-child(10) + .event ~ .event {
-  display: none;
-}
-
-.calendar-day .event-list .event:nth-child(11)::before {
-  content: '＋他の予定あり';
-  display: block;
-  color: #999;
-  font-size: 9px;
-  margin-top: 2px;
+  color: #000;
 }
