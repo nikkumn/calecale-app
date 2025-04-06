@@ -1,21 +1,103 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>モバイルカレンダー</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Googleカレンダー読み込みテスト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .event {
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #f0f8ff;
+    }
+  </style>
 </head>
 <body>
-  <div class="calendar-container">
-    <div class="calendar-header">2024年4月</div>
-    <div class="calendar-grid" id="calendar">
-      <!-- JavaScriptで自動生成 -->
-    </div>
-  </div>
 
-  <!-- Google API クライアント -->
+  <h1>✅ Googleカレンダー予定の表示</h1>
+  <button onclick="handleAuthClick()">Googleログインして予定を取得</button>
+  <div id="event-list"></div>
+
+  <!-- Google API読み込み -->
   <script src="https://apis.google.com/js/api.js"></script>
-  <script src="script.js"></script>
+  <script>
+    const CLIENT_ID = "165371481053-bke2g7h24up7v2rtdm3ohpvd8cavpovr.apps.googleusercontent.com";
+    const API_KEY = "AIzaSyB5RT6Y3yGdspz9MBVFIQ2fVfRYNm_CtLs";
+    const DISCOVERY_DOCS = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
+    const SCOPES = "https://www.googleapis.com/auth/calendar.readonly";
+
+    let gapiInited = false;
+    let gisInited = false;
+    let tokenClient;
+
+    function gapiLoaded() {
+      gapi.load('client', async () => {
+        await gapi.client.init({
+          apiKey: API_KEY,
+          discoveryDocs: DISCOVERY_DOCS,
+        });
+        gapiInited = true;
+      });
+    }
+
+    function gisLoaded() {
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        callback: async (tokenResponse) => {
+          await listUpcomingEvents();
+        },
+      });
+      gisInited = true;
+    }
+
+    function handleAuthClick() {
+      if (gapiInited && gisInited) {
+        tokenClient.requestAccessToken();
+      }
+    }
+
+    async function listUpcomingEvents() {
+      const response = await gapi.client.calendar.events.list({
+        calendarId: 'primary',
+        timeMin: new Date().toISOString(),
+        showDeleted: false,
+        singleEvents: true,
+        maxResults: 10,
+        orderBy: 'startTime',
+      });
+
+      const events = response.result.items;
+      const container = document.getElementById("event-list");
+      container.innerHTML = "";
+
+      if (events.length === 0) {
+        container.innerHTML = "<p>予定がありません。</p>";
+        return;
+      }
+
+      events.forEach((event) => {
+        const div = document.createElement("div");
+        div.className = "event";
+        div.textContent = `${event.start.dateTime || event.start.date} : ${event.summary}`;
+        container.appendChild(div);
+      });
+    }
+
+    // 読み込み時にAPI初期化
+    window.onload = () => {
+      gapiLoaded();
+      gisLoaded();
+    };
+  </script>
+
+  <!-- Google Identity Services (OAuth用) -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
 </body>
 </html>
