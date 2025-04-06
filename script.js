@@ -1,5 +1,5 @@
-const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
-const API_KEY = 'YOUR_API_KEY';
+const CLIENT_ID = '165371481053-bke2g7h24up7v2rtdm3ohpvd8cavpovr.apps.googleusercontent.com';
+const API_KEY = 'AIzaSyB5RT6Y3yGdspz9MBVFIQ2fVfRYNm_CtLs';
 const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
 function initClient() {
