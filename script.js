@@ -14,9 +14,24 @@ window.onload = () => {
     tokenClient = google.accounts.oauth2.initTokenClient({
       client_id: CLIENT_ID,
       scope: SCOPES,
-      callback: async () => await loadCalendar(currentDate),
+      prompt: '', // ポップアップを抑制して自動再認証
+      callback: async () => {
+        await loadCalendar(currentDate);
+        setInterval(() => {
+          loadCalendar(currentDate);
+        }, 30000); // 30秒ごとに更新
+      },
     });
-    tokenClient.requestAccessToken();
+
+    // すでにトークンがあれば自動読み込み、なければリクエスト
+    if (gapi.client.getToken()) {
+      await loadCalendar(currentDate);
+      setInterval(() => {
+        loadCalendar(currentDate);
+      }, 30000); // 30秒ごとに更新
+    } else {
+      tokenClient.requestAccessToken();
+    }
   });
 };
 
@@ -101,4 +116,4 @@ async function loadCalendar(date) {
       }
     }
   });
-}
+} 
