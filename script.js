@@ -15,7 +15,8 @@ window.onload = () => {
       client_id: CLIENT_ID,
       scope: SCOPES,
       prompt: '', // ポップアップを抑制して自動再認証
-      callback: async () => {
+      callback: async (response) => {
+        gapi.client.setToken(response); // トークンを明示的に保存
         await loadCalendar(currentDate);
         setInterval(() => {
           loadCalendar(currentDate);
@@ -28,7 +29,7 @@ window.onload = () => {
       await loadCalendar(currentDate);
       setInterval(() => {
         loadCalendar(currentDate);
-      }, 30000); // 30秒ごとに更新
+      }, 30000);
     } else {
       tokenClient.requestAccessToken();
     }
@@ -116,4 +117,4 @@ async function loadCalendar(date) {
       }
     }
   });
-} 
+}
